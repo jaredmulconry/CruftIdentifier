@@ -63,7 +63,7 @@ appropriate patterns to match.";
         {
             int prnOffset = 0;
             auto convRes = std::from_chars(&*directorySmatch.first, &*directorySmatch.first + directorySmatch.length(), prnOffset);
-            if (convRes.ec == std::errc::invalid_argument)
+            if (convRes.ec != std::errc::invalid_argument)
             {
                 newSet.parentOffset = prnOffset;
             }

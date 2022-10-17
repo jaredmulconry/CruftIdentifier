@@ -30,7 +30,8 @@ bool EndsWith(const std::string& parent, std::string_view target)
 }
 bool StartsWith(const std::string& parent, std::string_view target)
 {
-    return parent.find(target) == 0;
+    auto fPos = parent.find(target);
+    return fPos == 0;
 }
 
 std::optional<std::reference_wrapper<const MatchSet>> 
@@ -44,7 +45,7 @@ IsLocationSuspicious(fs::path path, const std::vector<MatchSet>& badSets)
         {
             continue;
         }
-
+        
         if ((pattern.isSuffix && EndsWith(path.generic_string(), pattern.matchString))
             || (!pattern.isSuffix && StartsWith(fs::relative(path, path.parent_path()).generic_string(), pattern.matchString)))
         {
@@ -73,16 +74,15 @@ std::vector<BadLocation> CheckPatterns(fs::path basePath,
                 {
                     parentLocation = parentLocation.parent_path();
                     prntCnt--;
-                } while (prntCnt >= 0);
+                } while (prntCnt > 0);
             }
 
             std::string locationName = thisPath.is_directory()
                 ? fs::relative(thisPath, badPath.parent_path()).generic_string()
                 : badPath.filename().generic_string();
 
-            badLocations.emplace_back(locationName, fs::relative(badPath, basePath),
+            badLocations.emplace_back(locationName, fs::relative(badPath.parent_path(), basePath),
                 fs::relative(parentLocation, basePath));
-            //std::cout << "Perhaps you should delete: " << std::filesystem::relative(thisPath, basePath).generic_string() << std::endl;
         }
     }
 

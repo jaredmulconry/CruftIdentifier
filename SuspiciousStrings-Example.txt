@@ -1,6 +1,7 @@
 .vs d f s
 .git d f s
 .tlog d t2 s
+.exe f t1 s
 Library d f p
 obj d f s
 temp d f s
