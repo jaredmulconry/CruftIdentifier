@@ -1,7 +1,8 @@
 # CruftIdentifier
-Batch tool that receives a collection of target directories as input, then identifies any files or directories that match a pattern defined in a provided patterns file.
+Batch tool that receives a collection of target directories as input, then identifies any files or directories that match a pattern defined in the provided patterns file.
 
 Patterns are specified in a text file that should be located alongside the executable. The text file shall have the name SuspiciousStrings.txt
+
 Matching structure: <text_to_match> <d|f> <t[n{1}]|f> [p|{s}]
 1. Text_to_match - Text pattern to match against.
 2. d|f - Directory or file.
