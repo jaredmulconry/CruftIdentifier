@@ -93,7 +93,7 @@ void ReportLocations(const std::vector<BadLocation>& badSpots)
 {
     for (const auto& bad : badSpots)
     {
-        std::cout << "\tYou have " << std::quoted(bad.badName) << " left at location ";
+        std::cout << "\t" << std::quoted(bad.badName) << " has been found at location ";
         std::cout << bad.badLocation.generic_string();
         std::cout << std::endl;
         std::cout << "\t - Consider deleting " << bad.flagLocation.generic_string();
