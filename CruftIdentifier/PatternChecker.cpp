@@ -35,9 +35,13 @@ bool StartsWith(const std::string& parent, std::string_view target)
 }
 
 std::optional<std::reference_wrapper<const MatchSet>> 
-IsLocationSuspicious(fs::path path, const std::vector<MatchSet>& badSets)
+IsLocationSuspicious(fs::directory_entry path, const std::vector<MatchSet>& badSets)
 {
-    bool pathIsDir = fs::is_directory(path);
+    bool pathIsDir = path.is_directory();
+    auto& pathFromDirEntry = path.path();
+
+    std::string pathGeneric = pathFromDirEntry.generic_string();
+    std::string currentDirectoryOnly = pathFromDirEntry.filename().generic_string();//fs::relative(pathFromDirEntry, pathFromDirEntry.parent_path()).generic_string();
 
     for(const auto& pattern : badSets)
     {
@@ -46,8 +50,8 @@ IsLocationSuspicious(fs::path path, const std::vector<MatchSet>& badSets)
             continue;
         }
         
-        if ((pattern.isSuffix && EndsWith(path.generic_string(), pattern.matchString))
-            || (!pattern.isSuffix && StartsWith(fs::relative(path, path.parent_path()).generic_string(), pattern.matchString)))
+        if ((pattern.isSuffix && EndsWith(pathGeneric, pattern.matchString))
+            || (!pattern.isSuffix && StartsWith(currentDirectoryOnly, pattern.matchString)))
         {
             return std::optional<std::reference_wrapper<const MatchSet>>(std::in_place, pattern);
         }
@@ -62,7 +66,7 @@ std::vector<BadLocation> CheckPatterns(fs::path basePath,
     std::vector<BadLocation> badLocations;
     for (const auto& thisPath : fs::recursive_directory_iterator(basePath))
     {
-        if (auto sus = IsLocationSuspicious(thisPath.path(), badSets); sus.has_value())
+        if (auto sus = IsLocationSuspicious(thisPath, badSets); sus.has_value())
         {
             const auto& badPath = thisPath.path();
             fs::path parentLocation = badPath;
